@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="guidSnippeterPackage">
+    <Groups>
+      <Group guid="guidSnippeterPackageCmdSet" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidSnippeterPackageCmdSet" id="Command1Id" priority="0x0100" type="Button">
+        <Parent guid="guidSnippeterPackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="commandPng" />
+        <Strings>
+          <ButtonText>Add snippet</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+    <Bitmaps>
+      <Bitmap guid="guidImages" href="Resources\Command.png" usedList="commandPng"/>
+    </Bitmaps>
+  </Commands>
+
+  <Symbols>
+    <!-- This is the package guid. -->
+    <GuidSymbol name="guidSnippeterPackage" value="{e58ad809-e8fd-4595-bcf6-372c77484b11}" />
+
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidSnippeterPackageCmdSet" value="{98ea3419-d3e9-44f5-915d-932c95dbb026}">
+      <IDSymbol name="MyMenuGroup" value="0x1020" />
+      <IDSymbol name="Command1Id" value="0x0100" />
+    </GuidSymbol>
+
+    <GuidSymbol name="guidImages" value="{3067bf78-85cc-4b28-9eed-c6c2882dc9cc}" >
+      <IDSymbol name="commandPng" value="1" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
