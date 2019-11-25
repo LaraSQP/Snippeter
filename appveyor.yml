@@ -1,0 +1,21 @@
+# Branchs to build
+branches:
+  only:
+    - master    
+
+configuration: Release
+
+build:
+  project: Snippeter.sln
+  verbosity: minimal
+
+install:
+  - ps: (new-object Net.WebClient).DownloadString("https://raw.github.com/madskristensen/ExtensionScripts/master/AppVeyor/vsix.ps1") | iex
+
+before_build: 
+  # Increment version in .vsixmanifest and update the AppVeyor build version to match
+  - ps: Vsix-IncrementVsixVersion | Vsix-UpdateBuildVersion
+
+after_test:
+  # Push artifacts and publish the nighly build to http://vsixgallery.com
+  - ps: Vsix-PushArtifacts | Vsix-PublishToGallery
