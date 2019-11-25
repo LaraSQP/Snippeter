@@ -1,6 +1,6 @@
 # Snippeter, a c# snippet extension for Visual Studio 2019
 
-There is nothing to this extension. It simply makes it easier to add/edit/remove c# snippets directly from the IDE, instead of the built-in **Code Snippets Manager** which is of little use except to import them.
+This extension makes it possible to add/edit/remove c# snippets directly from the IDE, instead of manually crafting XML snippet templates with the appropriate data to then import them via the built-in **Code Snippets Manager**.
 
 ## Setup
 
