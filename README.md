@@ -1,6 +1,6 @@
 # Snippeter, a c# snippet extension for Visual Studio 2019
 
-There is nothing to this extension. It simply makes it easier to add/edit/remove snippets from the built-in **Code Snippets Manager** directly from the IDE.
+This extension makes it possible to add/edit/remove c# snippets directly from the IDE, instead of manually crafting XML snippet templates with the appropriate data to then import them via the built-in **Code Snippets Manager**.
 
 ## Setup
 
@@ -12,15 +12,15 @@ A quick way to get to **Snippeter** is to add the extension to the toolbar (bott
 
 ![toolbar](https://user-images.githubusercontent.com/12540983/69513785-57bc0780-0f8c-11ea-8eb6-46229e087459.png)
 
-If code has been selected in an editor when **Snippeter** is run, the window below pops up. There, it is possible to modify the code and add a description, shortcut, and title. The last two in red are required (as is the code).
+If code has been selected in the editor when **Snippeter** is run, the window below pops up. There, it is possible to modify the code and add a description, shortcut, and title. The last two in red are required (as is the code).
 
-**Snippeter** uses the **Avalon editor** so it has some of its nice features available.
+**Snippeter** uses the **Avalon editor** so it has some of its nice features available, such as syntax-highliting.
 
 After adding a snippet, the status bar will notify you of the achievement for a few seconds.
 
 ![add new](https://user-images.githubusercontent.com/12540983/69513780-57237100-0f8c-11ea-99c1-243414ec629d.png)
 
-If **no** code has been selected in an editor when **Snippeter** is run, it pops up in manager mode (see below).
+If **no** code has been selected in the editor when **Snippeter** is run, it pops up in manager mode (see below).
 
 ![manager](https://user-images.githubusercontent.com/12540983/69513784-57237100-0f8c-11ea-942a-047eba301f67.png)
 
