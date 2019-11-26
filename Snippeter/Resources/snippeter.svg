@@ -17,9 +17,9 @@
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="snippeter.svg"
-   inkscape:export-filename="W:\snippeter128.png"
-   inkscape:export-xdpi="64"
-   inkscape:export-ydpi="64">
+   inkscape:export-filename="W:\preview.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150">
   <defs
      id="defs2">
     <linearGradient
@@ -53,7 +53,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="134.59272"
+     inkscape:cx="72.720876"
      inkscape:cy="12.580486"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -82,7 +82,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

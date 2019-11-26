@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
+ <ItemGroup>
     <PackageReference Include="AvalonEdit">
       <Version>6.0.0</Version>
     </PackageReference>
