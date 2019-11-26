@@ -1,6 +1,6 @@
 # Snippeter, a c# snippet extension for Visual Studio 2019
 
-This extension makes it possible to add/edit/remove c# snippets directly from the IDE, instead of manually crafting XML snippet templates with the appropriate data to then import them via the built-in **Code Snippets Manager**.
+This extension makes it possible to add/edit/remove *c# snippets* directly from the IDE, instead of manually crafting XML snippet templates with the appropriate data to then import them via the built-in **Code Snippets Manager**.
 
 ## Setup
 
@@ -12,7 +12,7 @@ A quick way to get to **Snippeter** is to add the extension to the toolbar (bott
 
 ![toolbar](https://user-images.githubusercontent.com/12540983/69513785-57bc0780-0f8c-11ea-8eb6-46229e087459.png)
 
-If code has been selected in the editor when **Snippeter** is run, the window below pops up. There, it is possible to modify the code and add a description, shortcut, and title. The last two in red are required (as is the code).
+If code has been selected in the editor when **Snippeter** is run, the window below pops up. There, it is possible to modify the code and add a description, shortcut, and title. The last two in red are required (as is some code).
 
 **Snippeter** uses the **Avalon editor** so it has some of its nice features available, such as syntax-highliting.
 
@@ -36,4 +36,4 @@ If you want to work with your snippets, open **Snippeter** without selecting cod
 
 ## Limitations
 
-**Snippeter** only works with c# snippets. If you need something else, fork the code. It's a mess but it works, I think.
+**Snippeter** only works with *c# snippets*. If you need something else, fork the code. It's a mess but it works, I think.
