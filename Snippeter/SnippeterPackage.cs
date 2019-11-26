@@ -77,7 +77,8 @@ namespace Snippeter
 				}
 				catch( Exception ex )
 				{
-					Box.Error( "Failed to fetch text, exception:", ex.Message );
+					Box.Error( "Failed to fetch text, exception:", ex.Message,
+							   "Carry on, this is a non-critical error." );
 					return;
 				}
 			}

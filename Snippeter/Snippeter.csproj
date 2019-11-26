@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
- <ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AvalonEdit">
       <Version>6.0.0</Version>
     </PackageReference>
@@ -126,9 +126,11 @@
     <Content Include="Resources\snippeter.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="Resources\snippeter.svg" />
     <Content Include="Resources\snippeter128.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="snippeter.ico" />
     <Content Include="snippeter128.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
