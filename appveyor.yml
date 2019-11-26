@@ -15,7 +15,7 @@ install:
 
 before_build: 
   # Increment version in .vsixmanifest and update the AppVeyor build version to match
-  - ps: Vsix-IncrementVsixVersion | Vsix-UpdateBuildVersion
+  - ps: Vsix-IncrementVsixVersion .\Snippeter\source.extension.vsixmanifest | Vsix-UpdateBuildVersion
   
 build_script:
   - nuget restore -Verbosity quiet
