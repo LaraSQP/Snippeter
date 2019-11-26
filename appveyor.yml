@@ -1,8 +1,9 @@
 # Branchs to build
 branches:
   only:
-    - master    
-
+    - master 
+    
+image: Visual Studio 2019
 configuration: Release
 
 build:
