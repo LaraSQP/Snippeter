@@ -79,11 +79,6 @@ namespace Snippeter
 		{
 			InitializeComponent();
 
-			// Set an icon using code
-			var iconUri = new Uri( "./../../snippeter.ico", UriKind.Relative );
-
-			Icon = BitmapFrame.Create( iconUri );
-
 			lvSnippets.MouseUp += lvSnippets_MouseUp;
 
 			// Store extension basic data
