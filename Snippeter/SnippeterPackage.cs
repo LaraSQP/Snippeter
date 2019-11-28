@@ -87,11 +87,11 @@ namespace Snippeter
 				{
 					snippetCode = codeDoc.Selection.Text.Normalize();
 				}
-				catch( Exception ex )
+				catch( Exception )
 				{
-					Box.Error( "Failed to fetch text, exception:", ex.Message,
-							   "Carry on, this is a non-critical error." );
-					return;
+					// Certain property pages claim to be code windows and throw exceptions
+					// Consume these quietly and open Snippeter without code (and in manager mode)
+					snippetCode = "";
 				}
 			}
 
