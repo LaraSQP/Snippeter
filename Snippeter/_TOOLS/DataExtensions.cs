@@ -33,7 +33,8 @@ namespace Snippeter
 				}
 				catch( Exception ex )
 				{
-					Box.Error( "Clipboard SetDataObject exception:", ex.Message );
+					Box.Error( "Unable to copy data to the clipboard, exception:", ex.Message,
+							   "Carry on, this is a non-critical error." );
 
 					success = false;
 				}

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Interop;
 
 using EnvDTE;
 using EnvDTE80;
+
 using Microsoft;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.Win32;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -22,7 +25,7 @@ namespace Snippeter
 		private const int				CommandId			= 0x0100;
 		private const string			PackageGuidString	= "e58ad809-e8fd-4595-bcf6-372c77484b11";
 
-		private DTE2					Dte;
+		private DTE2					_dte;
 
 
 
@@ -51,18 +54,27 @@ namespace Snippeter
 				Box.Error( "Unable to SwitchToMainThreadAsync, exception:", ex.Message );
 			}
 
-			Dte = await GetServiceAsync( typeof( DTE ) ) as DTE2;
+			_dte = await GetServiceAsync( typeof( DTE ) ) as DTE2;
 
-			Assumes.Present( Dte );
+			Assumes.Present( _dte );
 
-			// Get snippet
+			// Get the user's snippet folder
+			var userSnippetFolder = GetUserSnippetFolder();
+
+			if( userSnippetFolder == "" )
+			{
+				// Quit quietly, GetUserSnippetFolder() already reported the problem
+				return;
+			}
+
+			// Get snippet code
 			var codeDoc = null as TextDocument;
-			var proceed = ( Dte.ActiveWindow != null
-							&& Dte.ActiveWindow.Document != null );
+			var proceed = ( _dte.ActiveWindow != null
+							&& _dte.ActiveWindow.Document != null );
 
 			if( proceed == true )
 			{
-				codeDoc = Dte.ActiveWindow.Document.Object( string.Empty ) as TextDocument;
+				codeDoc = _dte.ActiveWindow.Document.Object( string.Empty ) as TextDocument;
 
 				proceed = ( codeDoc != null );
 			}
@@ -85,8 +97,8 @@ namespace Snippeter
 
 			// If no code has been selected, the extension will not allow adding a code-less snippet (i.e., "Add snippet" button)
 			// and will instead function as a snippet manager
-			var dlg		= new SnippeterWindow( this, snippetCode, Dte.Version );
-			var hwnd	= new IntPtr( Dte.MainWindow.HWnd );
+			var dlg		= new SnippeterWindow( this, snippetCode, userSnippetFolder );
+			var hwnd	= new IntPtr( _dte.MainWindow.HWnd );
 			var window	= ( System.Windows.Window )HwndSource.FromHwnd( hwnd ).RootVisual;
 
 			dlg.Owner = window;
@@ -98,17 +110,53 @@ namespace Snippeter
 				if( result.HasValue == true
 					&& result.Value == true )
 				{
-					Dte.StatusBar.Text = "Snippet created. Title = {0} Shortcut = {1}".FormatWith( dlg.SnippetTitle, dlg.SnippetShortcut );
-					Dte.StatusBar.Highlight( true );
+					_dte.StatusBar.Text = "Snippet created. Title = {0} Shortcut = {1}".FormatWith( dlg.SnippetTitle, dlg.SnippetShortcut );
+
+					_dte.StatusBar.Highlight( true );
 
 					await Task.Delay( 5000 );
 
-					Dte.StatusBar.Text = "";
+					_dte.StatusBar.Text = "";
 				}
 			}
 			catch( InvalidOperationException ex )
 			{
 				Box.Error( "Unable to display Snippeter window, exception:", ex.Message );
+			}
+		}
+
+
+
+
+		/// <summary>
+		/// Gets the user's snippet folder
+		/// </summary>
+		private string GetUserSnippetFolder()
+		{
+			var path = "";
+
+			try
+			{
+				var vsKey = Registry.CurrentUser.OpenSubKey( @"Software\Microsoft\VisualStudio\" + _dte.Version );
+
+				if( vsKey != null )
+				{
+					path = (string)vsKey.GetValue( "VisualStudioLocation", "" );
+				}
+			}
+			catch( Exception ex )
+			{
+				Box.Error( "Unable to obtain the location of Visual Studio {1} from the registry, exception:".FormatWith( _dte.Version ), ex.Message );
+				path = "";
+			}
+
+			if( path.IsNullOrWhitespace() == true )
+			{
+				return "";
+			}
+			else
+			{
+				return Path.Combine( path, @"Code Snippets\Visual C#\My Code Snippets\" );
 			}
 		}
 	}

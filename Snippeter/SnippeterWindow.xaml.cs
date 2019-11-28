@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
+using System.Xml.XPath;
 
 using ICSharpCode.AvalonEdit;
 
 using Microsoft.VisualStudio.Shell;
-using Microsoft.Win32;
 
 namespace Snippeter
 {
@@ -33,11 +34,7 @@ namespace Snippeter
 		{
 			get; set;
 		}
-		private string VsVersion
-		{
-			get; set;
-		}
-		private string PathSettings
+		private string UserSnippetPath
 		{
 			get; set;
 		}
@@ -46,7 +43,7 @@ namespace Snippeter
 		private readonly TextEditor Avalon = new TextEditor();
 
 		// Data
-		private readonly SortedDictionary<string, Item> Snippets = new SortedDictionary<string, Item>();
+		private readonly SortedDictionary<string, Item> _snippets = new SortedDictionary<string, Item>();
 		private class Item
 		{
 			public string Path
@@ -76,7 +73,7 @@ namespace Snippeter
 		/// <summary>
 		/// Creates the window and loads either the editor or the manager
 		/// </summary>
-		internal SnippeterWindow( SnippeterPackage snippeterPackage, string snippetCode, string vsVersion )
+		internal SnippeterWindow( SnippeterPackage snippeterPackage, string snippetCode, string userSnippetPath )
 		{
 			InitializeComponent();
 
@@ -84,33 +81,22 @@ namespace Snippeter
 
 			// Store extension basic data
 			SnippeterPackage	= snippeterPackage;
-			VsVersion			= vsVersion;
+			UserSnippetPath		= userSnippetPath;
 
-			// Fetch user snippet folder or simply quit for no work can be done without it
-			var snippetPath = GetUserSnippetFolder();
+			// Hide/disable minimize button
+			WindowExtensions.HideDisableMinimizeButton( this );
 
-			if( snippetPath.IsNullOrWhitespace() == true )
+			// Restore window size and position, if any
+			if( Properties.Settings.Default.WindowHeight != -1 )
 			{
-				Box.Error( "Unable to obtain the user's snippet directory." );
-
-				Close();
+				WindowStartupLocation	= WindowStartupLocation.Manual;
+				SizeToContent			= SizeToContent.Manual;
+				Top						= Properties.Settings.Default.WindowTop;
+				Left					= Properties.Settings.Default.WindowLeft;
+				Width					= Properties.Settings.Default.WindowHeight;
+				Height					= Properties.Settings.Default.WindowWidth;
+				WindowState				= Properties.Settings.Default.WindowState;
 			}
-
-			// Load settings
-			WindowExtensions.HideMinimizeAndMaximizeButtons( this );
-
-			try
-			{
-				PathSettings = Path.GetFullPath( Path.Combine( snippetPath, @"..\Snippeter.ini" ) );
-			}
-			catch( Exception ex )
-			{
-				PathSettings = "";
-
-				Box.Error( "Unable to obtain a valid path to store settings, exception:", ex.Message );
-			}
-
-			LoadSettings();
 
 			// Set the extension to act as creator of a new snippet or as manager of existing ones
 			var addSnippet = ( snippetCode.IsNullOrWhitespace() == false );
@@ -133,36 +119,86 @@ namespace Snippeter
 				// Manager mode, thus load available snippets
 				try
 				{
-					var paths		= snippetPath.GetFilesInFolder( "*.snippet" );
-					var xmlDocument = new XmlDocument();
+					var paths = UserSnippetPath.GetFilesInFolder( "*.snippet" );
 
-					foreach( var path in paths )
-					{
-						xmlDocument.Load( path );
-
-						var xmlns	= xmlDocument.DocumentElement.NamespaceURI;
-						var nsMgr	= new XmlNamespaceManager( xmlDocument.NameTable );
-
-						nsMgr.AddNamespace( "ns1", xmlns );
-
-						var item = new Item
-						{
-							Path		= path,
-							Title		= xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Title", nsMgr )?.InnerText.Trim().Unescape(),
-							Shortcut	= xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Shortcut", nsMgr ).InnerText.Trim().Unescape(),
-							Description = xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Description", nsMgr ).InnerText.Trim().Unescape(),
-							Code		= xmlDocument.SelectSingleNode( "//ns1:Snippet/ns1:Code", nsMgr ).InnerText.Trim(),
-						};
-
-						Snippets.Add( path, item );
-					}
-
-					lvSnippets.ItemsSource = Snippets.Values;
+					LoadSnippets( paths );
 				}
 				catch( Exception ex )
 				{
-					Box.Error( "DetailsDialog constructor, exception:", ex.Message );
+					Box.Error( "Unable to obtain snippets from the user's snippet directory and, thus, will not run Snippeter.",
+							   "Exception: ", ex.Message );
+
+					Close();
 				}
+
+				lvSnippets.ItemsSource = _snippets.Values;
+			}
+		}
+
+
+
+
+		/// <summary>
+		/// Loads snippets from the user's snippet directory while checking for their integrity and reporting broken ones, if any
+		/// </summary>
+		private void LoadSnippets( List<string> paths )
+		{
+			var xmlDocument = new XmlDocument();
+			var failedLoads = new List<string>();
+
+			foreach( var path in paths )
+			{
+				try
+				{
+					xmlDocument.Load( path );
+				}
+				catch( Exception )
+				{
+					failedLoads.Add( path );
+					continue;
+				}
+
+				var xmlns	= xmlDocument.DocumentElement.NamespaceURI;
+				var nsMgr	= null as XmlNamespaceManager;
+
+				try
+				{
+					nsMgr = new XmlNamespaceManager( xmlDocument.NameTable );
+				}
+				catch( NullReferenceException )
+				{
+					failedLoads.Add( path );
+					continue;
+				}
+
+				nsMgr.AddNamespace( "ns1", xmlns );
+
+				var item = new Item();
+
+				try
+				{
+					item.Title			= xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Title", nsMgr )?.InnerText.Trim().Unescape();
+					item.Shortcut		= xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Shortcut", nsMgr ).InnerText.Trim().Unescape();
+					item.Code			= xmlDocument.SelectSingleNode( "//ns1:Snippet/ns1:Code", nsMgr ).InnerText.Trim();
+					item.Description	= xmlDocument.SelectSingleNode( "//ns1:Header/ns1:Description", nsMgr ).InnerText.Trim().Unescape();
+					item.Path			= path;
+				}
+				catch( XPathException )
+				{
+					failedLoads.Add( path );
+					continue;
+				}
+
+				_snippets.Add( path, item );
+			}
+
+			if( failedLoads.Count > 0 )
+			{
+				failedLoads.Join( Box.NL ).CopyToClipboard();
+
+				failedLoads.Insert( 0, "The following snippets failed to load. Check their integrity manually. Their paths have been copied to the clipboard." );
+
+				Box.Info( failedLoads.ToArray() );
 			}
 		}
 
@@ -256,27 +292,6 @@ namespace Snippeter
 
 
 		/// <summary>
-		/// Loads and sets window size and position
-		/// </summary>
-		private void LoadSettings()
-		{
-			// Restore window size and position, if any
-			if( Properties.Settings.Default.WindowHeight != -1 )
-			{
-				WindowStartupLocation	= WindowStartupLocation.Manual;
-				SizeToContent			= SizeToContent.Manual;
-				Top						= Properties.Settings.Default.WindowTop;
-				Left					= Properties.Settings.Default.WindowLeft;
-				Width					= Properties.Settings.Default.WindowHeight;
-				Height					= Properties.Settings.Default.WindowWidth;
-				WindowState				= Properties.Settings.Default.WindowState;
-			}
-		}
-
-
-
-
-		/// <summary>
 		/// Deletes the currently selected item in the listview and its corresponding snippet file
 		/// </summary>
 		private void lvSnippets_PreviewKeyDown( object sender, KeyEventArgs e )
@@ -293,7 +308,8 @@ namespace Snippeter
 				if( Box.Question( "Are you sure you want to delete this snippet?",
 								  "Title:", item.Title,
 								  "Shortcut:", item.Shortcut,
-								  "Path:", item.Path ) == MessageBoxResult.Yes )
+								  "Path:", item.Path,
+								  "This is a non-reversible operation." ) == MessageBoxResult.Yes )
 				{
 					try
 					{
@@ -301,12 +317,12 @@ namespace Snippeter
 					}
 					catch( Exception ex )
 					{
-						Box.Error( "Unable to delete file, exception:", ex.Message );
+						Box.Error( "Unable to delete snippet file, exception:", ex.Message );
 						return;
 					}
 
 					// Remove from source, listview, and clear attribute fields
-					Snippets.Remove( item.Path );
+					_snippets.Remove( item.Path );
 
 					lvSnippets.Items.Refresh();
 
@@ -339,7 +355,7 @@ namespace Snippeter
 
 
 		/// <summary>
-		/// Overrides the ESC key to quickly dimiss the editor or the manager
+		/// Overrides the ESC key to quickly dismiss the editor or the manager
 		/// </summary>
 		protected override void OnPreviewKeyDown( KeyEventArgs e )
 		{
@@ -479,15 +495,21 @@ namespace Snippeter
 				goto skipListViewUpdate;
 			}
 
-			// Update the snippet file
-			if( SaveSnippetToFile( title, shortcut, description, code, out string fullpath ) == false )
+			// Update the snippet file, retaining the same file name if the title has not changed
+			// If it has, a new file will be created and the old snippet file will be deleted a few lines below
+			if( SaveSnippetToFile( title,
+								   shortcut,
+								   description,
+								   code,
+								   out string fullpath,
+								   useThisPath : ( item.Title == title )? item.Path : "" ) == false )
 			{
 				// There was some problem and it was reported by the method, move on
 				goto skipListViewUpdate;
 			}
 
 			// Update the listview
-			var snippet = Snippets[ item.Path ];
+			var snippet = _snippets[ item.Path ];
 
 			snippet.Shortcut	= shortcut;
 			snippet.Description = description;
@@ -510,16 +532,16 @@ namespace Snippeter
 				// Update the item
 				snippet.Title = title;
 
-				Snippets.Remove( item.Path );
+				_snippets.Remove( item.Path );
 
 				snippet.Path = fullpath;
 
-				Snippets[ fullpath ] = snippet;
+				_snippets[ fullpath ] = snippet;
 			}
 
 			lvSnippets.Items.Refresh();
 
-			skipListViewUpdate :
+		skipListViewUpdate:
 			tbTitle.Text = tbDescription.Text = tbShortcut.Text = "";
 
 			// Done, show snippet manager
@@ -541,7 +563,7 @@ namespace Snippeter
 				return;
 			}
 
-			if( Box.Question( "Raw snippet file will open in the editor for you to make changes directly at your own risk.",
+			if( Box.Question( "The XML snippet file will open in the editor for you to make changes directly (at your own risk).",
 							  "Are you sure?" ) != MessageBoxResult.Yes )
 			{
 				return;
@@ -550,41 +572,6 @@ namespace Snippeter
 			VsShellUtilities.OpenDocument( SnippeterPackage, item.Path );
 
 			Close();
-		}
-
-
-
-
-		/// <summary>
-		/// Gets the user's snippet folder
-		/// </summary>
-		private string GetUserSnippetFolder()
-		{
-			var path = "";
-
-			try
-			{
-				var vsKey = Registry.CurrentUser.OpenSubKey( @"Software\Microsoft\VisualStudio\" + VsVersion );
-
-				if( vsKey != null )
-				{
-					path = (string)vsKey.GetValue( "VisualStudioLocation", "" );
-				}
-			}
-			catch( Exception ex )
-			{
-				Box.Error( "Unable to obtain the user's snippet folder from the registry, exception:", ex.Message );
-				path = "";
-			}
-
-			if( path.IsNullOrWhitespace() == true )
-			{
-				return "";
-			}
-			else
-			{
-				return Path.Combine( path, @"Code Snippets\Visual C#\My Code Snippets\" );
-			}
 		}
 
 
@@ -631,24 +618,27 @@ namespace Snippeter
 
 
 		/// <summary>
-		/// Creates the snippet xml and saves it to file
+		/// Creates the snippet XML and saves it to file
 		/// </summary>
 		private bool SaveSnippetToFile( string title,
 										string shortcut,
 										string description,
 										string code,
-										out string fullpath )
+										out string fullpath,
+										string useThisPath = "" )
 		{
 			fullpath = "";
 
-			var path		= GetUserSnippetFolder();
 			var fileName	= title;
 			var counter		= 2;
 
-			// Add a numeric tag to the filename if it already exists
-			while( File.Exists( Path.Combine( path, fileName + ".snippet" ) ) == true )
+			if( useThisPath == "" )
 			{
-				fileName = "{0} {1}".FormatWith( title, counter++ );
+				// Add a numeric tag to the filename if it already exists
+				while( File.Exists( Path.Combine( UserSnippetPath, fileName + ".snippet" ) ) == true )
+				{
+					fileName = "{0} {1}".FormatWith( title, counter++ );
+				}
 			}
 
 			var snippetXml = TEMPLATE.FormatWith( title.Escape(),
@@ -663,19 +653,19 @@ namespace Snippeter
 			}
 			catch( XmlException ex )
 			{
-				Box.Error( "Error creating xml snippet, exception:", ex.Message );
+				Box.Error( "Error creating XML snippet, exception:", ex.Message );
 				return false;
 			}
 
 			try
 			{
-				fullpath = Path.Combine( path, fileName + ".snippet" );
+				fullpath = Path.Combine( UserSnippetPath, fileName + ".snippet" );
 
-				xmlDocument.Save( fullpath );
+				xmlDocument.Save( ( useThisPath == "" )? fullpath : useThisPath );
 			}
 			catch( XmlException ex )
 			{
-				Box.Error( "Error saving xml snippet, exception:", ex.Message );
+				Box.Error( "Error saving XML snippet, exception:", ex.Message );
 				return false;
 			}
 
@@ -691,29 +681,29 @@ namespace Snippeter
 		private const string TEMPLATE = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <CodeSnippets xmlns = ""http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet"">
   <CodeSnippet Format=""1.0.0"">
-    <Header>
-      <SnippetTypes>
-        <SnippetType>Expansion</SnippetType>
-      </SnippetTypes>
-      <Title>
+	<Header>
+	  <SnippetTypes>
+		<SnippetType>Expansion</SnippetType>
+	  </SnippetTypes>
+	  <Title>
 {0}
-      </Title>
-      <Author>
-      </Author>
-      <Description>
+	  </Title>
+	  <Author>
+	  </Author>
+	  <Description>
 {1}
-      </Description>
-      <HelpUrl>
-      </HelpUrl>
-      <Shortcut>{2}</Shortcut>
-    </Header>
-    <Snippet>
-      <Code Language = ""csharp"" Delimiter=""$"">
+	  </Description>
+	  <HelpUrl>
+	  </HelpUrl>
+	  <Shortcut>{2}</Shortcut>
+	</Header>
+	<Snippet>
+	  <Code Language = ""csharp"" Delimiter=""$"">
 			<![CDATA[
 {3}
 			]]>
 	  </Code>
-    </Snippet>
+	</Snippet>
   </CodeSnippet>
 </CodeSnippets>";
 	};
