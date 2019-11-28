@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -77,6 +79,11 @@ namespace Snippeter
 		{
 			InitializeComponent();
 
+			// Set an icon using code
+			var iconUri = new Uri( "./../../snippeter.ico", UriKind.Relative );
+
+			Icon = BitmapFrame.Create( iconUri );
+
 			lvSnippets.MouseUp += lvSnippets_MouseUp;
 
 			// Store extension basic data
@@ -114,7 +121,17 @@ namespace Snippeter
 
 				ShowEditor( snippetCode );
 			}
-			else
+		}
+
+
+
+
+		/// <summary>
+		/// Called when Snippeter's window has loaded
+		/// </summary>
+		private void OnLoad( object sender, RoutedEventArgs e )
+		{
+			if( lvSnippets.Visibility == Visibility.Visible )
 			{
 				// Manager mode, thus load available snippets
 				try
@@ -194,11 +211,29 @@ namespace Snippeter
 
 			if( failedLoads.Count > 0 )
 			{
+				// Copy full paths to the clipboard
 				failedLoads.Join( Box.NL ).CopyToClipboard();
 
-				failedLoads.Insert( 0, "The following snippets failed to load. Check their integrity manually. Their paths have been copied to the clipboard." );
+				// Create report
+				var ls = new List<string>
+				{
+					"The following snippets failed to load:",
+					failedLoads.Select( x => Path.GetFileName( x ) ).Join( Box.NL ),
+					"Check their integrity manually.",
+					"Their full paths have been copied to the clipboard.",
+					"Do you want to open them now in the IDE?",
+					"(If 'yes' Snippeter will close, if 'no' Snippeter will open without those bad snippets)",
+				};
 
-				Box.Info( failedLoads.ToArray() );
+				if( Box.Question( ls.ToArray() ) == MessageBoxResult.Yes )
+				{
+					foreach( var path in failedLoads )
+					{
+						VsShellUtilities.OpenDocument( SnippeterPackage, path );
+					}
+
+					Close();
+				}
 			}
 		}
 
@@ -685,23 +720,17 @@ namespace Snippeter
 	  <SnippetTypes>
 		<SnippetType>Expansion</SnippetType>
 	  </SnippetTypes>
-	  <Title>
-{0}
-	  </Title>
+	  <Title>{0}</Title>
 	  <Author>
 	  </Author>
-	  <Description>
-{1}
-	  </Description>
+	  <Description>{1}</Description>
 	  <HelpUrl>
 	  </HelpUrl>
 	  <Shortcut>{2}</Shortcut>
 	</Header>
 	<Snippet>
 	  <Code Language = ""csharp"" Delimiter=""$"">
-			<![CDATA[
-{3}
-			]]>
+		<![CDATA[{3}]]>
 	  </Code>
 	</Snippet>
   </CodeSnippet>

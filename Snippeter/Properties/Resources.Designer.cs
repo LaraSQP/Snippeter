@@ -59,14 +59,5 @@ namespace Snippeter.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string snippet_xml_template {
-            get {
-                return ResourceManager.GetString("snippet xml template", resourceCulture);
-            }
-        }
     }
 }
