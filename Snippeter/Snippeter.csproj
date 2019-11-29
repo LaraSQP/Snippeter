@@ -113,6 +113,10 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="license.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -123,9 +127,7 @@
     <Content Include="Resources\preview.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\snippeter.ico">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="Resources\snippeter.ico" />
     <None Include="Resources\snippeter.svg" />
     <Content Include="Resources\snippeter128.png">
       <IncludeInVSIX>true</IncludeInVSIX>

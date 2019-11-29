@@ -23,7 +23,7 @@
         <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbShortcut" Margin="5,5" VerticalContentAlignment="Center" Height="26" VerticalAlignment="Center" MinWidth="240" />
         <Label Grid.Row="2" Grid.Column="0" x:Name="laDescription" Content="Description:" HorizontalAlignment="Left" Margin="5 0 0 0" VerticalAlignment="Center" Height="26" FontWeight="SemiBold" />
         <TextBox Grid.Row="2" Grid.Column="1" x:Name="tbDescription" Margin="5,5" VerticalContentAlignment="Center" Height="26" VerticalAlignment="Center" MinWidth="240" />
-        <Button Grid.Row="3" Grid.Column="1" x:Name="btUpdate" Content="Update attributes" Click="btUpdate_Click" Margin="0,5,0,5" Padding="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="26" IsDefault="True" />
+        <Button Grid.Row="3" Grid.Column="1" x:Name="btUpdate" Content="Update snippet" Click="btUpdate_Click" Margin="0,5,0,5" Padding="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="26" IsDefault="True" />
         <Button Grid.Row="3" Grid.Column="1" x:Name="btOpen" Content="Open snippet file" Click="btOpen_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="26" />
         <Button Grid.Row="3" Grid.Column="1" x:Name="btDismiss" Content="Dismiss" Click="btDismiss_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Height="26" />
         <Button Grid.Row="3" Grid.Column="1" x:Name="btAdd" Content="Add snippet" Click="btAdd_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Height="26" IsDefault="True" />
@@ -32,12 +32,19 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <EventSetter Event="Control.MouseDoubleClick" Handler="lvSnippets_MouseDoubleClick" />
+                    <EventSetter Event="Control.MouseUp" Handler="lvSnippets_MouseUp" />
                     <Setter Property="ToolTip">
                         <Setter.Value>
-                            <StackPanel Orientation="Vertical" >
-                                <TextBlock Text="{Binding Code}"/>
-                                <TextBlock Text="{Binding Path}" Margin="0,20,0,0" Foreground="BlueViolet"/>
-                            </StackPanel>
+                            <Border  Background="White" Padding="4">
+                                <StackPanel Orientation="Vertical" Background="White">
+                                    <TextBlock Text="Description:" Foreground="RoyalBlue" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Description}" Foreground="RoyalBlue"/>
+                                    <TextBlock Text="Code:" Margin="0,20,0,0" Foreground="RoyalBlue" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Code}"/>
+                                    <TextBlock Text="Path:" Margin="0,20,0,0" Foreground="RoyalBlue" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path}" Foreground="RoyalBlue"/>
+                                </StackPanel>
+                            </Border>
                         </Setter.Value>
                     </Setter>
                 </Style>

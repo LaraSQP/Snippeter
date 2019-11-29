@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.XPath;
@@ -15,6 +13,7 @@ using System.Xml.XPath;
 using ICSharpCode.AvalonEdit;
 
 using Microsoft.VisualStudio.Shell;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace Snippeter
 {
@@ -79,14 +78,20 @@ namespace Snippeter
 		{
 			InitializeComponent();
 
-			lvSnippets.MouseUp += lvSnippets_MouseUp;
+			// Window icon
+			var icon = WindowExtensions.ImageSourceFromIcon( Properties.Resources.snippeter );
 
-			// Store extension basic data
-			SnippeterPackage	= snippeterPackage;
-			UserSnippetPath		= userSnippetPath;
+			if( icon != null )
+			{
+				Icon = icon;
+			}
 
 			// Hide/disable minimize button
 			WindowExtensions.HideDisableMinimizeButton( this );
+
+			// Store extension's basic data
+			SnippeterPackage	= snippeterPackage;
+			UserSnippetPath		= userSnippetPath;
 
 			// Restore window size and position, if any
 			if( Properties.Settings.Default.WindowHeight != -1 )
