@@ -9,17 +9,20 @@ This extension makes it possible to add/edit/remove `c# snippets` directly from 
 
 ## Setup
 
-Install from the `Open VSIX gallery` via the `Tools -> Extensions and Updates` menu or [download](http://vsixgallery.com/extensions/Snippeter.205e93a2-67fd-418d-a773-558dbce0ffd0/Snippeter%20v1.0.16.vsix)  as a `VSIX` package and install it manually.
+Install from the `Open VSIX gallery` via the `Extensions -> Manage Extensions` menu (you might need to add the feed, see [this](http://vsixgallery.com/guide/feed/)) or [download the latest CI build](http://vsixgallery.com/extension/Snippeter.205e93a2-67fd-418d-a773-558dbce0ffd0/) as a `VSIX` package and install it manually.
+
+- **Note that** the `releases` tab here in `github` will either be empty or have out-of-date releases.
 
 ## Getting Started
 
-- Once installed, the `Tools` menu will show the entry ![Command](https://user-images.githubusercontent.com/12540983/69513781-57237100-0f8c-11ea-922d-eba6925ddc74.png) `Add snippet`, as shown below:
+- Once installed, the `Extensions` menu will show the entry ![Command](https://user-images.githubusercontent.com/12540983/69513781-57237100-0f8c-11ea-922d-eba6925ddc74.png) `Add snippet`, as shown below:
 
-![tools](https://user-images.githubusercontent.com/12540983/69891035-d920ea80-133c-11ea-8f7d-c902cdbbfcc5.png)
+![extensions](https://user-images.githubusercontent.com/12540983/70004739-b7c53600-15aa-11ea-95f6-09e774073e9f.png)
 
-- A quick way to get to **Snippeter** is to add the extension to the toolbar, as shown in the image below (bottom right below) or to manually assign a shortcut to it via `Options -> Keyboard -> Tools.AddSnippet`.
+- A quick way to get to **Snippeter** is to add the extension to the toolbar, as shown in the image below (bottom right below) or to manually assign a shortcut to it via `Options -> Keyboard -> Addsnippet`.
 
-![toolbar](https://user-images.githubusercontent.com/12540983/69891033-d920ea80-133c-11ea-8dbc-6ec19e0ddcf5.png)
+![toolbar](https://user-images.githubusercontent.com/12540983/70191581-9300c800-173c-11ea-86dc-04024c8c0057.jpg)
+
 
 - If code has been selected in the editor when **Snippeter** is run, the window below pops up. There, it is possible to modify the code and add a description, shortcut, and title. The last two in red are required (as is some code).
 
