@@ -18,7 +18,7 @@ build:
 
 install:
   - ps: (new-object Net.WebClient).DownloadString("https://raw.github.com/madskristensen/ExtensionScripts/master/AppVeyor/vsix.ps1") | iex
-  - cmd: appveyor-tools\secure-file -decrypt .\Snippeter\larasqp.pfx.enc -secret %my_secret% -salt %my_salt%
+  - cmd: appveyor-tools\secure-file -decrypt .\larasqp.pfx.enc -secret %my_secret% -salt %my_salt%
 
 before_build: 
   # Increment version in .vsixmanifest and update the AppVeyor build version to match
