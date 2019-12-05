@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Snippeter.205e93a2-67fd-418d-a773-558dbce0ffd0" Version="1.0.32" Language="en-US" Publisher="LaraSQP" />
+        <Identity Id="Snippeter.205e93a2-67fd-418d-a773-558dbce0ffd0" Version="1.0.33" Language="en-US" Publisher="LaraSQP" />
         <DisplayName>Snippeter</DisplayName>
         <Description xml:space="preserve">Create and modify c# snippets directly from the IDE</Description>
         <MoreInfo>https://github.com/LaraSQP/Snippeter</MoreInfo>
