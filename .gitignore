@@ -332,3 +332,4 @@ ASALocalRun/
 # LaraSQP
 *.svg
 .svn/
+/Snippeter/appveyor-tools
