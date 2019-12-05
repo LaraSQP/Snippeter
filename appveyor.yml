@@ -7,7 +7,7 @@ environment:
     my_secret:
         secure: 0jcCLhrNJ5+ETyEsOhsexi+CY6N2dhvwOcDyU/203bU=
     my_salt:
-        secure: r+q3nPw+EJkrQpK8kyEbjkJQBhQDDpOTIPSZrGLg61d0PywWe+U=
+        secure: 8UOhrtcTKxW+ihSBpZsaWRhrM2af+005vYnoG/SRTRM+ep3Sm2Y=
     
 image: Visual Studio 2019
 configuration: Release
