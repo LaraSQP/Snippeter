@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Snippeter
+namespace LaraSPQ.Tools
 {
 	internal static class Box
 	{
@@ -34,9 +34,9 @@ namespace Snippeter
 			try
 			{
 				return MessageBox.Show( msg,
-									"Question",
-									MessageBoxButton.YesNo,
-									MessageBoxImage.Question );
+										"Question",
+										MessageBoxButton.YesNo,
+										MessageBoxImage.Question );
 			}
 			catch( InvalidOperationException )
 			{
@@ -67,9 +67,9 @@ namespace Snippeter
 			try
 			{
 				return MessageBox.Show( msg,
-									"Question",
-									MessageBoxButton.YesNoCancel,
-									MessageBoxImage.Question );
+										"Question",
+										MessageBoxButton.YesNoCancel,
+										MessageBoxImage.Question );
 			}
 			catch( InvalidOperationException )
 			{
@@ -99,9 +99,9 @@ namespace Snippeter
 			try
 			{
 				return MessageBox.Show( msg,
-									"Warning",
-									MessageBoxButton.OK,
-									MessageBoxImage.Warning );
+										"Warning",
+										MessageBoxButton.OK,
+										MessageBoxImage.Warning );
 			}
 			catch( InvalidOperationException )
 			{
@@ -131,9 +131,9 @@ namespace Snippeter
 			try
 			{
 				return MessageBox.Show( msg,
-									"Information",
-									MessageBoxButton.OK,
-									MessageBoxImage.Information );
+										"Information",
+										MessageBoxButton.OK,
+										MessageBoxImage.Information );
 			}
 			catch( InvalidOperationException )
 			{
@@ -163,9 +163,9 @@ namespace Snippeter
 			try
 			{
 				return MessageBox.Show( msg,
-									"ERROR",
-									MessageBoxButton.OK,
-									MessageBoxImage.Error );
+										"ERROR",
+										MessageBoxButton.OK,
+										MessageBoxImage.Error );
 			}
 			catch( InvalidOperationException )
 			{

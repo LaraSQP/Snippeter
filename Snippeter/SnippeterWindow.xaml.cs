@@ -6,32 +6,44 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Media;
 using System.Xml;
 using System.Xml.XPath;
-
 using ICSharpCode.AvalonEdit;
-
+using LaraSPQ.Tools;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
-using Brushes = System.Windows.Media.Brushes;
+using Microsoft.VisualStudio.Shell.Settings;
 
 namespace Snippeter
 {
 	/// <summary>
-	/// Interaction logic for DetailsDialog.xaml
+	/// Interaction logic for SnippeterWindow.xaml
 	/// </summary>
 	public partial class SnippeterWindow : Window
 	{
+		// Settings' constants
+		private const string	SS_Collection	= "Snippeter";
+		private const string	SS_WindowTop	= "WindowTop";
+		private const string	SS_WindowLeft	= "WindowLeft";
+		private const string	SS_WindowHeight = "WindowHeight";
+		private const string	SS_WindowWidth	= "WindowWidth";
+		private const string	SS_WindowState	= "WindowState";
+
 		// Properties
-		internal string SnippetTitle
+		internal string SnippetPath
 		{
-			get { return tbTitle.Text.Trim(); }
+			get; set;
 		}
-		internal string SnippetShortcut
+		internal bool OpenSnippetInIDE
 		{
-			get { return tbShortcut.Text.Trim(); }
+			get; set;
 		}
-		private SnippeterPackage SnippeterPackage
+		private AsyncPackage Package
+		{
+			get; set;
+		}
+		private WritableSettingsStore WritableSettingsStore
 		{
 			get; set;
 		}
@@ -74,36 +86,12 @@ namespace Snippeter
 		/// <summary>
 		/// Creates the window and loads either the editor or the manager
 		/// </summary>
-		internal SnippeterWindow( SnippeterPackage snippeterPackage, string snippetCode, string userSnippetPath )
+		public SnippeterWindow( AsyncPackage package, string snippetCode, string userSnippetPath )
 		{
 			InitializeComponent();
 
-			// Window icon
-			var icon = WindowExtensions.ImageSourceFromIcon( Properties.Resources.snippeter );
-
-			if( icon != null )
-			{
-				Icon = icon;
-			}
-
-			// Hide/disable minimize button
-			WindowExtensions.HideDisableMinimizeButton( this );
-
-			// Store extension's basic data
-			SnippeterPackage	= snippeterPackage;
-			UserSnippetPath		= userSnippetPath;
-
-			// Restore window size and position, if any
-			if( Properties.Settings.Default.WindowHeight != -1 )
-			{
-				WindowStartupLocation	= WindowStartupLocation.Manual;
-				SizeToContent			= SizeToContent.Manual;
-				Top						= Properties.Settings.Default.WindowTop;
-				Left					= Properties.Settings.Default.WindowLeft;
-				Width					= Properties.Settings.Default.WindowHeight;
-				Height					= Properties.Settings.Default.WindowWidth;
-				WindowState				= Properties.Settings.Default.WindowState;
-			}
+			Package			= package;
+			UserSnippetPath = userSnippetPath;
 
 			// Set the extension to act as creator of a new snippet or as manager of existing ones
 			var addSnippet = ( snippetCode.IsNullOrWhitespace() == false );
@@ -131,6 +119,48 @@ namespace Snippeter
 		/// </summary>
 		private void OnLoad( object sender, RoutedEventArgs e )
 		{
+			// Window icon
+			var icon = WindowExtensions.ImageSourceFromIcon( Properties.Resources.snippeter );
+
+			if( icon != null )
+			{
+				Icon = icon;
+			}
+
+			// Hide/disable minimize button
+			WindowExtensions.HideMinimizeAndMaximizeButtons( this, hideMaximize: false );
+
+			// Restore window size and position, if any
+			try
+			{
+				var settingsManager = new ShellSettingsManager( Package );
+
+				WritableSettingsStore = settingsManager.GetWritableSettingsStore( SettingsScope.UserSettings );
+
+				if( WritableSettingsStore.CollectionExists( SS_Collection ) == true )
+				{
+					// These two are required from now on
+					WindowStartupLocation	= WindowStartupLocation.Manual;
+					SizeToContent			= SizeToContent.Manual;
+
+					// Window size and position
+					Top			= WritableSettingsStore.GetInt32( SS_Collection, SS_WindowTop );
+					Left		= WritableSettingsStore.GetInt32( SS_Collection, SS_WindowLeft );
+					Height		= WritableSettingsStore.GetInt32( SS_Collection, SS_WindowHeight );
+					Width		= WritableSettingsStore.GetInt32( SS_Collection, SS_WindowWidth );
+					WindowState = (WindowState)WritableSettingsStore.GetInt32( SS_Collection, SS_WindowState );
+				}
+				else
+				{
+					// Create collection now to be able to check for other settings the 1st time around
+					WritableSettingsStore.CreateCollection( SS_Collection );
+				}
+			}
+			catch( Exception )
+			{
+				// Ignore quietly
+			}
+
 			if( lvSnippets.Visibility == Visibility.Visible )
 			{
 				// Manager mode, thus load available snippets
@@ -229,7 +259,7 @@ namespace Snippeter
 				{
 					foreach( var path in failedLoads )
 					{
-						VsShellUtilities.OpenDocument( SnippeterPackage, path );
+						VsShellUtilities.OpenDocument( Package, path );
 					}
 
 					Close();
@@ -312,15 +342,27 @@ namespace Snippeter
 		/// <summary>
 		/// Saves window size and position
 		/// </summary>
-		protected override void OnClosing( CancelEventArgs e )
+		private void OnClosing( object sender, CancelEventArgs e )
 		{
-			base.OnClosing( e );
+			try
+			{
+				// This check should be unnecessary unless there was an Exception in OnLoad
+				if( WritableSettingsStore.CollectionExists( SS_Collection ) == false )
+				{
+					WritableSettingsStore.CreateCollection( SS_Collection );
+				}
 
-			Properties.Settings.Default.WindowTop		= Top;
-			Properties.Settings.Default.WindowLeft		= Left;
-			Properties.Settings.Default.WindowHeight	= Width;
-			Properties.Settings.Default.WindowWidth		= Height;
-			Properties.Settings.Default.WindowState		= WindowState;
+				// Window size and position
+				WritableSettingsStore.SetInt32( SS_Collection, SS_WindowTop, (int)Top );
+				WritableSettingsStore.SetInt32( SS_Collection, SS_WindowLeft, (int)Left );
+				WritableSettingsStore.SetInt32( SS_Collection, SS_WindowWidth, (int)Width );
+				WritableSettingsStore.SetInt32( SS_Collection, SS_WindowHeight, (int)Height );
+				WritableSettingsStore.SetInt32( SS_Collection, SS_WindowState, (int)WindowState );
+			}
+			catch( Exception )
+			{
+				// Ignore quietly
+			}
 		}
 
 
@@ -604,8 +646,9 @@ namespace Snippeter
 				return;
 			}
 
-			VsShellUtilities.OpenDocument( SnippeterPackage, item.Path );
-
+			OpenSnippetInIDE	= true;
+			SnippetPath			= item.Path;
+			DialogResult		= true;
 			Close();
 		}
 
@@ -735,5 +778,5 @@ namespace Snippeter
 	</Snippet>
   </CodeSnippet>
 </CodeSnippets>";
-	};
+	}
 }

@@ -6,12 +6,13 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Snippeter
+namespace LaraSPQ.Tools
 {
 	internal static class WindowExtensions
 	{
 		// https://stackoverflow.com/questions/339620/how-do-i-remove-minimize-and-maximize-from-a-resizable-window-in-wpf
 		private const int	GWL_STYLE		= -16;
+		private const int	WS_MAXIMIZEBOX	= 0x10000;
 		private const int	WS_MINIMIZEBOX	= 0x20000;
 
 		[ DllImport( "user32.dll" ) ]
@@ -19,14 +20,19 @@ namespace Snippeter
 		[ DllImport( "user32.dll" ) ]
 		extern private static int SetWindowLong( IntPtr hwnd, int index, int value );
 
-		internal static void HideDisableMinimizeButton( this Window window )
+		internal static void HideMinimizeAndMaximizeButtons( this Window window,
+															 bool hideMaximize = true,
+															 bool hideMinimize = true )
 		{
 			window.SourceInitialized += ( s, e ) =>
 			{
 				var hwnd			= new System.Windows.Interop.WindowInteropHelper( window ).Handle;
 				var currentStyle	= GetWindowLong( hwnd, GWL_STYLE );
+				var currentStyleM	= currentStyle & ( ( hideMaximize == true )? ~WS_MAXIMIZEBOX : ~0 );
+				var currentStyleMm	= currentStyleM & ( ( hideMinimize == true )? ~WS_MINIMIZEBOX : ~0 );
 
-				SetWindowLong( hwnd, GWL_STYLE, ( currentStyle & ~WS_MINIMIZEBOX ) );
+
+				SetWindowLong( hwnd, GWL_STYLE, ( currentStyleMm ) );
 			};
 		}
 

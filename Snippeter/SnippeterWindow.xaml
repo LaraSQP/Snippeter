@@ -1,72 +1,206 @@
-﻿<Window
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Snippeter.SnippeterWindow"
-             Loaded="OnLoad"
-             Title="Snippeter" SizeToContent="WidthAndHeight" MinHeight="300" MinWidth="420" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
-    <Grid x:Name="grid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+﻿<Window x:Class="Snippeter.SnippeterWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Snippeter"
+		mc:Ignorable="d"
+		Loaded="OnLoad"
+		Closing="OnClosing"
+		Title="Snippeter"
+		ResizeMode="CanResizeWithGrip"
+		SizeToContent="WidthAndHeight"
+		MinHeight="300"
+		MinWidth="420"
+		ShowInTaskbar="False"
+		WindowStartupLocation="CenterScreen">
+	<Grid x:Name="grid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" x:Name="laTitle" Content="Title:" HorizontalAlignment="Left" Margin="5 0 0 0" VerticalAlignment="Center" Height="26" FontWeight="SemiBold" />
-        <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbTitle" Margin="5,5" VerticalContentAlignment="Center" Height="26" VerticalAlignment="Center" MinWidth="240" />
-        <Label Grid.Row="1" Grid.Column="0" x:Name="laShortcut" Content="Shortcut:" HorizontalAlignment="Left" Margin="5 0 0 0" VerticalAlignment="Center" Height="26" FontWeight="SemiBold" />
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbShortcut" Margin="5,5" VerticalContentAlignment="Center" Height="26" VerticalAlignment="Center" MinWidth="240" />
-        <Label Grid.Row="2" Grid.Column="0" x:Name="laDescription" Content="Description:" HorizontalAlignment="Left" Margin="5 0 0 0" VerticalAlignment="Center" Height="26" FontWeight="SemiBold" />
-        <TextBox Grid.Row="2" Grid.Column="1" x:Name="tbDescription" Margin="5,5" VerticalContentAlignment="Center" Height="26" VerticalAlignment="Center" MinWidth="240" />
-        <Button Grid.Row="3" Grid.Column="1" x:Name="btUpdate" Content="Update snippet" Click="btUpdate_Click" Margin="0,5,0,5" Padding="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="26" IsDefault="True" />
-        <Button Grid.Row="3" Grid.Column="1" x:Name="btOpen" Content="Open snippet file" Click="btOpen_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="26" />
-        <Button Grid.Row="3" Grid.Column="1" x:Name="btDismiss" Content="Dismiss" Click="btDismiss_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Height="26" />
-        <Button Grid.Row="3" Grid.Column="1" x:Name="btAdd" Content="Add snippet" Click="btAdd_Click" Margin="5,5" Padding="5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Height="26" IsDefault="True" />
-        <Label Grid.Row="3" x:Name="laModify" Content="Double-click on a snippet to modify it, press delete to remove it" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="5 0 5 0" VerticalAlignment="Center" Height="26" FontWeight="SemiBold" />
-        <ListView  Grid.Row="4" x:Name="lvSnippets" MinHeight="100" Margin="4" Grid.ColumnSpan="2" PreviewKeyDown="lvSnippets_PreviewKeyDown" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <EventSetter Event="Control.MouseDoubleClick" Handler="lvSnippets_MouseDoubleClick" />
-                    <EventSetter Event="Control.MouseUp" Handler="lvSnippets_MouseUp" />
-                    <Setter Property="ToolTip">
-                        <Setter.Value>
-                            <Border  Background="White" Padding="4">
-                                <StackPanel Orientation="Vertical" Background="White">
-                                    <TextBlock Text="Description:" Foreground="RoyalBlue" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Description}" Foreground="RoyalBlue"/>
-                                    <TextBlock Text="Code:" Margin="0,20,0,0" Foreground="RoyalBlue" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Code}"/>
-                                    <TextBlock Text="Path:" Margin="0,20,0,0" Foreground="RoyalBlue" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Path}" Foreground="RoyalBlue"/>
-                                </StackPanel>
-                            </Border>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Title" Width="200" DisplayMemberBinding="{Binding Title}">
-                        <GridViewColumn.HeaderContainerStyle>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                            </Style>
-                        </GridViewColumn.HeaderContainerStyle>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Shortcut" Width="165" DisplayMemberBinding="{Binding Shortcut}">
-                        <GridViewColumn.HeaderContainerStyle>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                            </Style>
-                        </GridViewColumn.HeaderContainerStyle>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+		<Label Grid.Row="0"
+			   Grid.Column="0"
+			   x:Name="laTitle"
+			   Content="Title:"
+			   HorizontalAlignment="Left"
+			   Margin="5 0 0 0"
+			   VerticalAlignment="Center"
+			   Height="26"
+			   FontWeight="SemiBold" />
+		<TextBox Grid.Row="0"
+				 Grid.Column="1"
+				 x:Name="tbTitle"
+				 Margin="5,5"
+				 VerticalContentAlignment="Center"
+				 Height="26"
+				 VerticalAlignment="Center"
+				 MinWidth="240" />
+		<Label Grid.Row="1"
+			   Grid.Column="0"
+			   x:Name="laShortcut"
+			   Content="Shortcut:"
+			   HorizontalAlignment="Left"
+			   Margin="5 0 0 0"
+			   VerticalAlignment="Center"
+			   Height="26"
+			   FontWeight="SemiBold" />
+		<TextBox Grid.Row="1"
+				 Grid.Column="1"
+				 x:Name="tbShortcut"
+				 Margin="5,5"
+				 VerticalContentAlignment="Center"
+				 Height="26"
+				 VerticalAlignment="Center"
+				 MinWidth="240" />
+		<Label Grid.Row="2"
+			   Grid.Column="0"
+			   x:Name="laDescription"
+			   Content="Description:"
+			   HorizontalAlignment="Left"
+			   Margin="5 0 0 0"
+			   VerticalAlignment="Center"
+			   Height="26"
+			   FontWeight="SemiBold" />
+		<TextBox Grid.Row="2"
+				 Grid.Column="1"
+				 x:Name="tbDescription"
+				 Margin="5,5"
+				 VerticalContentAlignment="Center"
+				 Height="26"
+				 VerticalAlignment="Center"
+				 MinWidth="240" />
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				x:Name="btUpdate"
+				Content="Update snippet"
+				Click="btUpdate_Click"
+				Margin="0,5,0,5"
+				Padding="5,0"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				Width="100"
+				Height="26"
+				IsDefault="True" />
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				x:Name="btOpen"
+				Content="Open snippet file"
+				Click="btOpen_Click"
+				Margin="5,5"
+				Padding="5,0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Width="auto"
+				Height="26" />
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				x:Name="btDismiss"
+				Content="Dismiss"
+				Click="btDismiss_Click"
+				Margin="5,5"
+				Padding="5,0"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Width="100"
+				Height="26" />
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				x:Name="btAdd"
+				Content="Add snippet"
+				Click="btAdd_Click"
+				Margin="5,5"
+				Padding="5,0"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Width="100"
+				Height="26"
+				IsDefault="True" />
+		<Label Grid.Row="3"
+			   x:Name="laModify"
+			   Content="Double-click on a snippet to modify it, press delete to remove it"
+			   Grid.ColumnSpan="2"
+			   HorizontalAlignment="Left"
+			   Margin="5 0 5 0"
+			   VerticalAlignment="Center"
+			   Height="26"
+			   FontWeight="SemiBold" />
+		<ListView Grid.Row="4"
+				  x:Name="lvSnippets"
+				  MinHeight="100"
+				  Margin="4"
+				  Grid.ColumnSpan="2"
+				  PreviewKeyDown="lvSnippets_PreviewKeyDown"
+				  HorizontalContentAlignment="Stretch"
+				  VerticalContentAlignment="Stretch"
+				  HorizontalAlignment="Stretch"
+				  VerticalAlignment="Stretch">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="{x:Type ListViewItem}">
+					<EventSetter Event="Control.MouseDoubleClick"
+								 Handler="lvSnippets_MouseDoubleClick" />
+					<EventSetter Event="Control.MouseUp"
+								 Handler="lvSnippets_MouseUp" />
+					<Setter Property="ToolTip">
+						<Setter.Value>
+							<Border Background="White"
+									Padding="4">
+								<StackPanel Orientation="Vertical"
+											Background="White">
+									<TextBlock Text="Description:"
+											   Foreground="RoyalBlue"
+											   FontWeight="Bold" />
+									<TextBlock Text="{Binding Description}"
+											   Foreground="RoyalBlue" />
+									<TextBlock Text="Code:"
+											   Margin="0,20,0,0"
+											   Foreground="RoyalBlue"
+											   FontWeight="Bold" />
+									<TextBlock Text="{Binding Code}" />
+									<TextBlock Text="Path:"
+											   Margin="0,20,0,0"
+											   Foreground="RoyalBlue"
+											   FontWeight="Bold" />
+									<TextBlock Text="{Binding Path}"
+											   Foreground="RoyalBlue" />
+								</StackPanel>
+							</Border>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Title"
+									Width="200"
+									DisplayMemberBinding="{Binding Title}">
+						<GridViewColumn.HeaderContainerStyle>
+							<Style TargetType="{x:Type GridViewColumnHeader}">
+								<Setter Property="HorizontalContentAlignment"
+										Value="Left" />
+							</Style>
+						</GridViewColumn.HeaderContainerStyle>
+					</GridViewColumn>
+					<GridViewColumn Header="Shortcut"
+									Width="165"
+									DisplayMemberBinding="{Binding Shortcut}">
+						<GridViewColumn.HeaderContainerStyle>
+							<Style TargetType="{x:Type GridViewColumnHeader}">
+								<Setter Property="HorizontalContentAlignment"
+										Value="Left" />
+							</Style>
+						</GridViewColumn.HeaderContainerStyle>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</Grid>
 </Window>

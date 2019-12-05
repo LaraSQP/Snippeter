@@ -6,7 +6,7 @@ using System.Net;
 using System.Security;
 using System.Windows;
 
-namespace Snippeter
+namespace LaraSPQ.Tools
 {
 	internal static class DataExtensions
 	{
@@ -44,6 +44,8 @@ namespace Snippeter
 		}
 
 
+
+
 		/// <summary>
 		/// Encodes problematic XML characters
 		/// </summary>
@@ -51,6 +53,7 @@ namespace Snippeter
 		{
 			return SecurityElement.Escape( value );
 		}
+
 
 
 
