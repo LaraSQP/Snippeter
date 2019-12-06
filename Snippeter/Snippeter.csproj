@@ -112,7 +112,7 @@
     </Content>
     <Content Include="Resources\Command.png" />
     <Content Include="Resources\preview.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\snippeter.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
