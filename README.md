@@ -11,7 +11,7 @@ This extension makes it possible to add/edit/remove `c# snippets` directly from 
 
 Install from the `Open VSIX gallery` via the `Extensions -> Manage Extensions` menu (you might need to add the feed, see [this](http://vsixgallery.com/guide/feed/)) or [download the latest CI build](http://vsixgallery.com/extension/Snippeter.205e93a2-67fd-418d-a773-558dbce0ffd0/) as a `VSIX` package and install it manually.
 
-- **Note that** the `releases` tab here in `github` will either be empty or have out-of-date releases.
+- **Note that** the `releases` tab at `GitHub` will either be empty or have out-of-date releases.
 
 ## Getting Started
 
