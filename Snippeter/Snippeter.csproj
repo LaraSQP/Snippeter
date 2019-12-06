@@ -116,10 +116,7 @@
     </Content>
     <Content Include="Resources\snippeter.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\snippeter128.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <VSCTCompile Include="SnippeterPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
