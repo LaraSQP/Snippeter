@@ -111,9 +111,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Command.png" />
-    <Content Include="Resources\preview.png" />
-    <Content Include="Resources\snippeter.ico">
+    <Content Include="Resources\preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\snippeter.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\snippeter128.png">
