@@ -3,11 +3,11 @@ branches:
   only:
     - master
     
-environment:
-    my_secret:
-        secure: 0jcCLhrNJ5+ETyEsOhsexi+CY6N2dhvwOcDyU/203bU=
-    my_salt:
-        secure: AqAwMqbKgCv0NoRlAY11lqP7HOP+h4MHMKTZ00pJCjkiwVEJoOE+Li6EjTjCAXJi4xJJavOs0Fgp1sUSzNLSfw==
+#environment:
+#   my_secret:
+#        secure: 0jcCLhrNJ5+ETyEsOhsexi+CY6N2dhvwOcDyU/203bU=
+#    my_salt:
+#        secure: AqAwMqbKgCv0NoRlAY11lqP7HOP+h4MHMKTZ00pJCjkiwVEJoOE+Li6EjTjCAXJi4xJJavOs0Fgp1sUSzNLSfw==
     
 image: Visual Studio 2019
 configuration: Release
@@ -18,8 +18,8 @@ build:
 
 install:
   - ps: (new-object Net.WebClient).DownloadString("https://raw.github.com/madskristensen/ExtensionScripts/master/AppVeyor/vsix.ps1") | iex
-  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
-  - cmd: appveyor-tools\secure-file -decrypt .\Snippeter\larasqp.pfx.enc -secret %my_secret% -salt %my_salt%
+#  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+#  - cmd: appveyor-tools\secure-file -decrypt .\Snippeter\larasqp.pfx.enc -secret %my_secret% -salt %my_salt%
 
 before_build: 
   # Increment version in .vsixmanifest and update the AppVeyor build version to match
