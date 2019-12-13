@@ -98,6 +98,7 @@ namespace Snippeter
 
 			btAdd.Visibility		= ( addSnippet == false )? Visibility.Hidden : Visibility.Visible;
 			laModify.Visibility		= ( addSnippet == false )? Visibility.Visible : Visibility.Hidden;
+			btEnd.Visibility		= Visibility.Hidden;
 			btUpdate.Visibility		= Visibility.Hidden;
 			btOpen.Visibility		= Visibility.Hidden;
 			btDismiss.Visibility	= Visibility.Hidden;
@@ -472,6 +473,7 @@ namespace Snippeter
 			// Toggle controls' visibility
 			laModify.Visibility		= Visibility.Hidden;
 			btAdd.Visibility		= Visibility.Hidden;
+			btEnd.Visibility		= Visibility.Visible;
 			btUpdate.Visibility		= Visibility.Visible;
 			btOpen.Visibility		= Visibility.Visible;
 			btDismiss.Visibility	= Visibility.Visible;
@@ -504,11 +506,35 @@ namespace Snippeter
 
 
 		/// <summary>
+		/// Inserts tag $end$ at the caret
+		/// </summary>
+		private void btEnd_Click( object sender, RoutedEventArgs e )
+		{
+			var end		= "$end$";
+			var index	= Avalon.Text.IndexOf( end );
+
+			if( index != -1 )
+			{
+				if( Box.Question( $"The {end} is already present.",
+								  "Would you like to remove it?" ) == MessageBoxResult.Yes )
+				{
+					Avalon.Document.Remove( index, end.Length );
+				}
+			}
+
+			Avalon.Document.Insert( Avalon.CaretOffset, end );
+		}
+
+
+
+
+		/// <summary>
 		/// Hide editing controls and clear snippet attribute fields
 		/// </summary>
 		private void DismissEditing()
 		{
 			// Toggle controls' visibility
+			btEnd.Visibility		= Visibility.Hidden;
 			btUpdate.Visibility		= Visibility.Hidden;
 			btOpen.Visibility		= Visibility.Hidden;
 			btDismiss.Visibility	= Visibility.Hidden;
@@ -546,6 +572,7 @@ namespace Snippeter
 			}
 
 			// Toggle controls' visibility
+			btEnd.Visibility		= Visibility.Hidden;
 			btUpdate.Visibility		= Visibility.Hidden;
 			btOpen.Visibility		= Visibility.Hidden;
 			btDismiss.Visibility	= Visibility.Hidden;

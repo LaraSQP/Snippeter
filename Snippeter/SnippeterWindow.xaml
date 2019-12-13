@@ -79,6 +79,18 @@
 				 VerticalAlignment="Center"
 				 MinWidth="240" />
 		<Button Grid.Row="3"
+				Grid.Column="0"
+				x:Name="btEnd"
+				Content="$end$"
+				Click="btEnd_Click"
+				Margin="5,5,0,5"
+				Padding="5,0"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				Width="auto"
+				Height="26"
+				IsDefault="True" />
+		<Button Grid.Row="3"
 				Grid.Column="1"
 				x:Name="btUpdate"
 				Content="Update snippet"
@@ -87,7 +99,7 @@
 				Padding="5,0"
 				HorizontalAlignment="Left"
 				VerticalAlignment="Center"
-				Width="100"
+				MinWidth="100"
 				Height="26"
 				IsDefault="True" />
 		<Button Grid.Row="3"
@@ -110,7 +122,7 @@
 				Padding="5,0"
 				HorizontalAlignment="Right"
 				VerticalAlignment="Center"
-				Width="100"
+				MinWidth="100"
 				Height="26" />
 		<Button Grid.Row="3"
 				Grid.Column="1"
