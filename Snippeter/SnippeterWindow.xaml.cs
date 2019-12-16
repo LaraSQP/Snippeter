@@ -98,7 +98,7 @@ namespace Snippeter
 
 			btAdd.Visibility		= ( addSnippet == false )? Visibility.Hidden : Visibility.Visible;
 			laModify.Visibility		= ( addSnippet == false )? Visibility.Visible : Visibility.Hidden;
-			btEnd.Visibility		= Visibility.Hidden;
+			btEnd.Visibility		= ( addSnippet == false )? Visibility.Hidden : Visibility.Visible;
 			btUpdate.Visibility		= Visibility.Hidden;
 			btOpen.Visibility		= Visibility.Hidden;
 			btDismiss.Visibility	= Visibility.Hidden;
@@ -515,7 +515,7 @@ namespace Snippeter
 
 			if( index != -1 )
 			{
-				if( Box.Question( $"The {end} is already present.",
+				if( Box.Question( $"A {end} tag is already present.",
 								  "Would you like to remove it?" ) == MessageBoxResult.Yes )
 				{
 					Avalon.Document.Remove( index, end.Length );
